@@ -10,11 +10,11 @@
 class StateTracker {
    private:
     std::vector<std::vector<int>> board;
-    static std::hash<int> int_hasher;
+    // static std::hash<int> int_hasher;
     std::function<size_t(const std::tuple<int, int>&)> hash =
         [](const auto& t) {
             auto [i, j] = t;
-            return int_hasher(10 * i + j);
+            return std::hash<int>()(10 * i + j);
         };
     std::unordered_set<std::tuple<int, int>, decltype(hash)> freeBlocks;
     std::default_random_engine rand_gen;
