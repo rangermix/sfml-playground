@@ -1,6 +1,6 @@
 CC=g++
 LIBS=-lsfml-graphics -lsfml-window -lsfml-system
-CFLAGS= -std=c++17
+CFLAGS= -std=c++17 -O3
 srcdir=./src/
 outdir=./build/
 
