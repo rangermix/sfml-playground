@@ -24,8 +24,7 @@ class StateTracker {
     int max_cell = 0;
 
     auto findEmpty() {
-        if (freeBlocks.empty())
-            return std::make_tuple(-1, -1);
+        if (freeBlocks.empty()) return std::make_tuple(-1, -1);
 
         std::uniform_int_distribution distribution(
             0, static_cast<int>(freeBlocks.size()) - 1);
@@ -47,14 +46,15 @@ class StateTracker {
             closeGame();
             return;
         }
-        std::uniform_int_distribution distribution(
-            0, 9);
-        int val = distribution(rand_gen);
-        update(i, j, val==9?4:2);
+        std::uniform_int_distribution distribution(0, 9);
+        int val = (distribution(rand_gen) == 9) ? 4 : 2;
+        score += val;
+        update(i, j, val);
     }
 
     void update(int i, int j, int val) {
         board[i][j] = val;
+        max_cell = std::max(max_cell, val);
         if (val == 0) {
             freeBlocks.emplace(i, j);
         } else {
@@ -69,9 +69,8 @@ class StateTracker {
 
     StateTracker(int n = 4)
         : board(std::vector<std::vector<int>>(n, std::vector<int>(n))),
-          freeBlocks(
-              std::unordered_set<std::tuple<int, int>, decltype(hash)>(16,
-                                                                       hash)),
+          freeBlocks(std::unordered_set<std::tuple<int, int>, decltype(hash)>(
+              16, hash)),
           size(n) {
         for (int i = 0; i < n; ++i) {
             for (int j = 0; j < n; ++j) {
@@ -83,6 +82,7 @@ class StateTracker {
     }
 
     void move(Direction drc) {
+        if (closed) return;
         int fix;
         int init_curr =
             (drc == Direction::UP || drc == Direction::LEFT) ? 0 : size - 1;
@@ -145,15 +145,9 @@ class StateTracker {
 
     const bool isClosed() { return closed; }
 
-    const auto getStatistics() {
-        for (int i = 0; i < size; ++i) {
-            for (int j = 0; j < size; ++j) {
-                score += board[i][j];
-                max_cell = std::max(max_cell, board[i][j]);
-            }
-        }
-        return std::make_tuple(score, max_cell);
-    }
+    const int getScore() { return score; }
+
+    const int getMaxCell() { return max_cell; }
 };
 
 #endif

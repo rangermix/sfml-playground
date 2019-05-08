@@ -1,7 +1,7 @@
 // #include "Listener.h"
-#include "StateTracker.h"
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Window.hpp>
+#include "StateTracker.h"
 #include "Viewer.h"
 
 int main(int argc, char const* argv[]) {
@@ -13,16 +13,16 @@ int main(int argc, char const* argv[]) {
     while (window.isOpen()) {
         // handle window event
         sf::Event event;
-        while (window.pollEvent(event))
-        {
-            switch (event.type)
-            {
+        while (window.pollEvent(event)) {
+            switch (event.type) {
+            // close window
             case sf::Event::Closed:
                 window.close();
                 break;
+            // move or quit
             case sf::Event::KeyPressed:
-                switch (event.key.code)
-                {
+                switch (event.key.code) {
+                // move
                 case sf::Keyboard::Key::Left:
                     st.move(StateTracker::Direction::LEFT);
                     break;
@@ -35,7 +35,14 @@ int main(int argc, char const* argv[]) {
                 case sf::Keyboard::Key::Down:
                     st.move(StateTracker::Direction::DOWN);
                     break;
+                // quit
                 case sf::Keyboard::Q:
+                    if (!st.isClosed()) {
+                        window.clear();
+                        viewer.drawQuit();
+                        window.display();
+                        sf::sleep(sf::seconds(1.2));
+                    }
                     window.close();
                     break;
                 default:
@@ -49,24 +56,9 @@ int main(int argc, char const* argv[]) {
 
         // draw the game
         window.clear();
-        viewer.drawBoard();
+        viewer.drawGame();
         window.display();
     }
 
-
-    // // Viewer viewer(st);
-    // Listener listener(st);
-    // while (1) {
-    //     // viewer.clearScreen();
-    //     // viewer.printBoard();
-    //     if (st.isClosed()) {
-    //         // viewer.printFinal();
-    //         break;
-    //     }
-    //     if (!listener.listen()) {
-    //         // viewer.printQuit();
-    //         break;
-    //     }
-    // }
     return 0;
 }
